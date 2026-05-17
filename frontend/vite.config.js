@@ -7,9 +7,13 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true
+        target: 'https://taskflow-backend-6pnv.onrender.com',
+        changeOrigin: true,
+        secure: false
       }
     }
+  },
+  build: {
+    outDir: 'dist'
   }
 });
