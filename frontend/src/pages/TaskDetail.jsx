@@ -172,7 +172,11 @@ const TaskDetail = () => {
   };
 
   const handleUpload = async () => {
-    if (!task || !task._id) return;
+    if (isNew || !task || !task._id) {
+      dispatch(showToast({ message: 'Please create the task first before uploading documents.', severity: 'warning' }));
+      setUploadDialog(false);
+      return;
+    }
     setUploading(true);
     await dispatch(uploadDocuments({ taskId: task._id, files: selectedFiles }));
     setUploading(false);
@@ -210,7 +214,7 @@ const TaskDetail = () => {
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    if (canEdit) setIsDragging(true);
+    if (canEdit && !isNew) setIsDragging(true);
   };
 
   const handleDragLeave = (e) => {
@@ -221,7 +225,7 @@ const TaskDetail = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-    if (canEdit) {
+    if (canEdit && !isNew) {
       processFiles(Array.from(e.dataTransfer.files));
     }
   };
@@ -432,7 +436,7 @@ const TaskDetail = () => {
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Typography variant="h6">Documents</Typography>
-                  {canEdit && (
+                  {canEdit && !isNew && (
                     <IconButton onClick={() => fileInputRef.current?.click()}>
                       <AddIcon />
                     </IconButton>
@@ -476,7 +480,7 @@ const TaskDetail = () => {
                     ))}
                     {(!task?.Documents || task.Documents.length === 0) && (
                       <Typography color="text.secondary" align="center" sx={{ py: 2 }}>
-                        {canEdit ? 'Drag & drop PDFs here, or click +' : 'No documents'}
+                        {isNew ? 'Please create the task first to upload documents' : canEdit ? 'Drag & drop PDFs here, or click +' : 'No documents'}
                       </Typography>
                     )}
                   </List>
